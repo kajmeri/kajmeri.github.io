@@ -20,8 +20,8 @@ const Content = styled.div`
   flex-direction: column;
   height: 60%;
   margin: auto;
-  padding: 40px;
   max-width: 385px;
+  padding: 40px;
 
   @media (min-width: 768px) {
     width: 500px;
@@ -62,8 +62,7 @@ const UserTile = styled.div`
 const Text = styled.span`
   color: #292739;
   font-size: 16px;
-  margin-right: 20px;
-  margin-top: 5px;
+  margin: 5px 20px 0 0;
 `
 
 const Wrapper = styled.div`
@@ -72,15 +71,14 @@ const Wrapper = styled.div`
   height: 90vh;
   padding: 40px;
 
-  h1 {
+  h1,
+  h3 {
     text-align: center;
   }
 `
 
 // Would have loved to infinitely load the list, but due to way we have to grab users from the GitHub api, it would keep hitting the API rate limit...KA
 const HomePage = () => {
-  const [hasMore, setHasMore] = useState(false)
-  const [page, setPage] = useState(0)
   const [searchInput, setSearchInput] = useState('')
   // This is null instead of an empty array so the 'No results' message doesn't flash on initial load...KA
   const [users, setUsers] = useState(null)
@@ -89,14 +87,11 @@ const HomePage = () => {
     const getUsers = async () => {
       const {
         data: { success, usersList },
-      } = await axios.post('/api/getGithubUsers', { page, searchInput })
+      } = await axios.post('/api/getGithubUsers', { searchInput })
 
       if (success) {
-        if (usersList.length === 0) {
-          setUsers([])
-          return setHasMore(false)
-        }
-        setUsers(usersList)
+        if (usersList.length === 0) setUsers([])
+        else setUsers(usersList)
       }
     }
 
@@ -116,14 +111,22 @@ const HomePage = () => {
   return (
     <Wrapper>
       <h1>GitHub User Search</h1>
+      <h3>Krishna Ajmeri</h3>
       <Content>
-        <SearchBar autoFocus handleClear={handleClear} onChange={handleChange} placeholder='Search for users...' value={searchInput} />
+        <SearchBar
+          autoFocus
+          handleClear={handleClear}
+          id='github-user-searchbar'
+          onChange={handleChange}
+          placeholder='Search for users...'
+          value={searchInput}
+        />
         {users?.length === 0 && <NoUsersText>No results found! Please try another search.</NoUsersText>}
         {!users && <NoUsersText>Begin your search above!</NoUsersText>}
         <UserList>
           {users?.length > 0 &&
-            users.map(({ avatar_url, created_at, email, html_url, location, login, name, public_repos, updated_at }) => (
-              <UserTile>
+            users.map(({ avatar_url, created_at, email, html_url, id, location, login, name, public_repos, updated_at }) => (
+              <UserTile key={id}>
                 <Avatar alt={`${name} avatar`} src={avatar_url} />
                 <UserInfo>
                   {name && (

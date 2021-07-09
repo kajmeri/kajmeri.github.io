@@ -19,10 +19,10 @@ const Wrapper = styled.div`
   background-color: #f3f5fb;
   border-radius: 20px;
   display: flex;
+  margin: 0 auto;
   padding: 7.5px 15px;
   position: relative;
   width: 80%;
-  margin: 0 auto;
 
   input {
     flex: 1 0 auto;
